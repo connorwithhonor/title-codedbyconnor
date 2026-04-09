@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What Every Real Estate Agent Needs to Know About AI | Connor MacIvor</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap');
+  :root{--black:#080909;--deep:#0e1012;--card:#141618;--border:#252729;--amber:#e8a830;--teal:#2dd4bf;--red:#f04444;--white:#efefef;--muted:#7a7c7e;--dim:#444;}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--black);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.65;overflow-x:hidden;}
+  .ticker-wrap{position:fixed;top:0;left:0;right:0;z-index:100;background:var(--amber);overflow:hidden;height:28px;}
+  .ticker{display:inline-flex;white-space:nowrap;animation:tick 40s linear infinite;}
+  .ticker span{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#000;padding:5px 28px;}
+  .ticker span::after{content:"◆";margin-left:28px;}
+  @keyframes tick{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  nav{position:fixed;top:28px;left:0;right:0;z-index:99;background:rgba(8,9,9,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 36px;height:52px;}
+  .nav-logo{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--white);text-decoration:none;letter-spacing:.04em;}
+  .nav-logo em{color:var(--amber);font-style:normal;}
+  .nav-links{display:flex;gap:2px;list-style:none;}
+  .nav-links a{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none;padding:4px 9px;border-radius:2px;transition:color .2s,background .2s;}
+  .nav-links a:hover{color:var(--amber);background:rgba(232,168,48,.07);}
+  .notes-toggle{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:none;border:1px solid var(--border);padding:5px 14px;border-radius:2px;cursor:pointer;transition:all .2s;}
+  .notes-toggle:hover,.notes-toggle.active{color:var(--amber);border-color:var(--amber);background:rgba(232,168,48,.06);}
+  .notes-panel{position:fixed;bottom:0;left:0;right:0;z-index:98;background:#0b0d0e;border-top:1px solid var(--border);padding:14px 36px 20px;transform:translateY(100%);transition:transform .3s ease;max-height:210px;overflow-y:auto;}
+  .notes-panel.visible{transform:translateY(0);}
+  .notes-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);margin-bottom:7px;}
+  .notes-text{font-size:13px;color:#bbb;line-height:1.75;}
+  section{min-height:100vh;padding:140px 88px 88px;display:flex;flex-direction:column;justify-content:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden;}
+  section:nth-child(even){background:var(--deep);}
+  .section-tag{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin-bottom:14px;display:flex;align-items:center;gap:14px;}
+  .section-tag::before{content:'';display:block;width:28px;height:1px;background:var(--amber);}
+  .section-num{position:absolute;right:80px;bottom:70px;font-family:'Playfair Display',serif;font-size:140px;line-height:1;color:rgba(255,255,255,.025);pointer-events:none;user-select:none;}
+  h1{font-family:'Playfair Display',serif;font-size:clamp(44px,6.5vw,82px);font-weight:900;line-height:1.05;color:var(--white);margin-bottom:22px;}
+  h1 em{color:var(--amber);font-style:normal;}
+  h2{font-family:'Playfair Display',serif;font-size:clamp(32px,4.5vw,56px);font-weight:700;line-height:1.1;color:var(--white);margin-bottom:18px;}
+  h3{font-family:'DM Sans',sans-serif;font-size:17px;font-weight:500;color:var(--white);margin-bottom:8px;}
+  p{font-size:16px;color:#b8babb;max-width:700px;margin-bottom:14px;line-height:1.8;}
+  p strong{color:var(--white);font-weight:500;}
+  .divider{width:44px;height:2px;background:var(--amber);margin:18px 0 30px;}
+  #hero{background:var(--black);}
+  .hero-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(232,168,48,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(232,168,48,.03) 1px,transparent 1px);background-size:64px 64px;mask-image:radial-gradient(ellipse 75% 75% at 50% 50%,black 20%,transparent 100%);}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px;}
+  .badge{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:7px 15px;border:1px solid var(--border);border-radius:2px;color:var(--muted);}
+  .badge.amber{border-color:var(--amber);color:var(--amber);}
+  .badge.teal{border-color:var(--teal);color:var(--teal);}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);margin-top:38px;}
+  .card{background:var(--card);padding:30px 26px;}
+  .card-num{font-family:'Playfair Display',serif;font-size:52px;font-weight:900;color:rgba(232,168,48,.14);margin-bottom:10px;line-height:1;display:block;}
+  .card .tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);margin-bottom:6px;display:block;}
+  .card p{font-size:14px;color:#999;margin:0;max-width:100%;}
+  .stat-row{display:flex;flex-wrap:wrap;gap:1px;background:var(--border);border:1px solid var(--border);margin-top:36px;}
+  .stat-cell{background:var(--card);flex:1;min-width:150px;padding:26px 22px;}
+  .stat-num{font-family:'Playfair Display',serif;font-size:50px;font-weight:900;color:var(--amber);line-height:1;display:block;margin-bottom:4px;}
+  .stat-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);}
+  .warn-cards,.good-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:34px;}
+  .warn-card{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--red);padding:22px;}
+  .good-card{background:var(--card);border:1px solid var(--border);border-left:3px solid var(--teal);padding:22px;}
+  .warn-card h3,.good-card h3{font-size:15px;margin-bottom:7px;}
+  .warn-card p,.good-card p{font-size:13px;color:#888;margin:0;max-width:100%;}
+  .card-icon{font-size:18px;margin-bottom:9px;display:block;}
+  .tool-table{width:100%;border-collapse:collapse;margin-top:30px;font-size:14px;}
+  .tool-table th{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);}
+  .tool-table td{padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.04);color:#bbb;vertical-align:top;}
+  .tool-table tr:hover td{background:rgba(255,255,255,.02);}
+  .tbadge{display:inline-block;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:1px;}
+  .tbadge.free{background:rgba(45,212,191,.12);color:var(--teal);}
+  .tbadge.paid{background:rgba(232,168,48,.12);color:var(--amber);}
+  .demo-block{background:var(--card);border:1px solid var(--border);border-top:2px solid var(--amber);padding:28px;margin-top:28px;}
+  .demo-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);margin-bottom:14px;display:block;}
+  .demo-prompt{font-family:'DM Mono',monospace;font-size:13px;color:#ccc;background:#0b0d0e;border:1px solid var(--border);padding:16px 18px;border-radius:2px;margin-bottom:10px;line-height:1.7;}
+  .demo-prompt span{color:var(--teal);}
+  .quiz-block{background:var(--card);border:1px solid var(--border);border-top:2px solid var(--teal);padding:28px;margin-top:28px;}
+  .quiz-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin-bottom:14px;display:block;}
+  .quiz-q{font-size:16px;font-weight:500;color:var(--white);margin-bottom:14px;}
+  .quiz-opts{display:flex;flex-wrap:wrap;gap:10px;}
+  .quiz-opt{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;border:1px solid var(--border);color:var(--muted);padding:8px 16px;border-radius:2px;cursor:pointer;transition:all .2s;}
+  .quiz-opt:hover,.quiz-opt.selected{border-color:var(--teal);color:var(--teal);background:rgba(45,212,191,.06);}
+  .timeline{margin-top:38px;position:relative;}
+  .timeline::before{content:'';position:absolute;left:76px;top:0;bottom:0;width:1px;background:var(--border);}
+  .tl-item{display:grid;grid-template-columns:76px 1fr;gap:28px;margin-bottom:32px;align-items:start;}
+  .tl-time{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.1em;color:var(--amber);text-align:right;padding-top:2px;position:relative;}
+  .tl-time::after{content:'';position:absolute;right:-15px;top:7px;width:7px;height:7px;border-radius:50%;background:var(--amber);box-shadow:0 0 8px var(--amber);}
+  .tl-body{padding-left:14px;}
+  .tl-body h3{font-size:15px;margin-bottom:5px;}
+  .tl-body p{font-size:13px;color:#888;margin:0;max-width:100%;}
+  .tl-chip{display:inline-block;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#000;background:var(--amber);padding:3px 10px;margin-top:8px;border-radius:1px;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);margin-top:32px;}
+  .step{background:var(--card);padding:30px 22px;}
+  .step-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);margin-bottom:12px;display:block;}
+  .step h3{font-size:18px;margin-bottom:9px;}
+  .step p{font-size:13px;color:#888;margin:0;max-width:100%;}
+  .step-time{display:inline-block;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border:1px solid var(--border);padding:4px 10px;margin-top:13px;border-radius:1px;}
+  .contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin-top:32px;}
+  .contact-card{background:var(--card);border:1px solid var(--border);padding:22px;}
+  .contact-card .label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:block;}
+  .contact-card a,.contact-card span{font-size:14px;color:var(--white);text-decoration:none;transition:color .2s;}
+  .contact-card a:hover{color:var(--amber);}
+  .footer-byline{margin-top:56px;padding-top:22px;border-top:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);}
+  .footer-byline a{color:var(--dim);text-decoration:none;}
+  .footer-byline a:hover{color:var(--amber);}
+  .fade-in{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease;}
+  .fade-in.visible{opacity:1;transform:none;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);margin-top:34px;}
+  @media(max-width:768px){section{padding:120px 24px 64px;}nav{padding:0 16px;}.nav-links{display:none;}.timeline::before{left:56px;}.tl-item{grid-template-columns:56px 1fr;gap:16px;}.two-col{grid-template-columns:1fr;}}
+</style>
+<link rel="icon" type="image/x-icon" href="/favicon.ico"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png"><link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png"><meta property="og:image" content="https://title.codedbyconnor.com/og-image.png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image"><meta name="twitter:image" content="https://title.codedbyconnor.com/og-image.png"></head>
+<body>
+
+<div class="ticker-wrap"><div class="ticker">
+  <span>AI for Real Estate Agents</span><span>ConnorWithHonor.com</span><span>661-400-1720</span><span>HonorElevate.com</span><span>50-Minute Working Class</span><span>Santa Clarita · Los Angeles · Pine Mountain</span><span>AI Growth Architect</span><span>AI for Real Estate Agents</span><span>ConnorWithHonor.com</span><span>661-400-1720</span><span>HonorElevate.com</span><span>50-Minute Working Class</span><span>Santa Clarita · Los Angeles · Pine Mountain</span><span>AI Growth Architect</span>
+</div></div>
+
+<nav>
+  <a class="nav-logo" href="#hero">Connor<em>With</em>Honor</a>
+  <ul class="nav-links">
+    <li><a href="#hero">01 Intro</a></li><li><a href="#landscape">02 Landscape</a></li><li><a href="#answer">03 Answer</a></li><li><a href="#five-ways">04 Five Ways</a></li><li><a href="#tools">05 Tools</a></li><li><a href="#demo">06 Demo</a></li><li><a href="#warning">07 Pitfalls</a></li><li><a href="#good">08 Best Practices</a></li><li><a href="#example">09 Day-in-Life</a></li><li><a href="#start">10 Action Plan</a></li><li><a href="#qa">11 Q&amp;A</a></li><li><a href="#close">12 Connect</a></li>
+  </ul>
+  <button class="notes-toggle" id="notesToggle">NOTES ◆ OFF</button>
+</nav>
+
+<div class="notes-panel" id="notesPanel">
+  <div class="notes-label">◆ SPEAKER NOTES — CURRENT SLIDE</div>
+  <div class="notes-text" id="notesText">Scroll to a section to see your speaking notes.</div>
+</div>
+
+<!-- 01 -->
+<section id="hero" data-notes="[0:00–3:00] Don't open with your bio. Start with a question: 'How many of you spent more than an hour last week doing something that had nothing to do with actually selling real estate?' Let hands go up. 'That hour — that's what today is about.' Then introduce yourself: 27 years SCV real estate, 23 years LAPD, and for the last several years I've been building and installing AI automation systems specifically for real estate professionals. I don't just talk about this — I build it, I install it, I run it in my own business every day. This is a 50-minute working class. No theory, no vendor pitch, nothing to buy. Just the straight truth on what AI does for agents, what it doesn't, and exactly how to start.'">
+  <div class="hero-grid"></div>
+  <div class="section-tag fade-in">01 / 12 · A 50-Minute Working Class</div>
+  <h1 class="fade-in">What Every Real<br>Estate Agent Needs<br>to Know About <em>AI</em></h1>
+  <div class="divider fade-in"></div>
+  <p class="fade-in">A practitioner's briefing — not a vendor pitch. What AI actually does for agents, what it doesn't do, and exactly how to implement it into your business starting today.</p>
+  <p class="fade-in" style="font-size:14px;color:var(--muted);">Santa Clarita · Los Angeles · Pine Mountain</p>
+  <div class="badges fade-in">
+    <span class="badge">27 Yrs Santa Clarita Real Estate</span>
+    <span class="badge">23 Yrs LAPD</span>
+    <span class="badge amber">AI Growth Architect</span>
+    <span class="badge teal">HonorElevate.com</span>
+    <span class="badge">CA DRE #01238257</span>
+  </div>
+  <div class="section-num">01</div>
+</section>
+
+<!-- 02 -->
+<section id="landscape" data-notes="[3:00–8:00] Set the context. The fastest tech adoption cycle in business history is happening right now. AI isn't coming — it's here. The agents building habits now are building a compounding competitive lead. Show of hands: 'Who's used ChatGPT at least once?' Then: 'Who uses it weekly?' The gap between those numbers is the opportunity. LAPD analogy: When MDTs — mobile data terminals — hit patrol cars in the 90s, some officers refused to learn them. Still writing paper reports while everyone else ran plates in 30 seconds. That officer wasn't wrong about police work. Wrong about the tool. Don't be that officer.'">
+  <div class="section-tag fade-in">02 / 12 · The Landscape</div>
+  <h2 class="fade-in">Where We Are<br>Right Now</h2>
+  <div class="divider fade-in"></div>
+  <p class="fade-in">AI adoption in real estate has crossed the tipping point. Agents building habits now are building an advantage that compounds. The window to be early is still open — but it's closing fast.</p>
+  <div class="stat-row fade-in">
+    <div class="stat-cell"><span class="stat-num">73%</span><span class="stat-label">of agents say admin work cuts into selling time daily</span></div>
+    <div class="stat-cell"><span class="stat-num">2.5h</span><span class="stat-label">average daily time lost to tasks AI can handle</span></div>
+    <div class="stat-cell"><span class="stat-num">500+</span><span class="stat-label">AI tools now marketed directly to real estate agents</span></div>
+    <div class="stat-cell"><span class="stat-num">12mo</span><span class="stat-label">window before early adopters lock in their lead</span></div>
+  </div>
+  <div class="quiz-block fade-in">
+    <span class="quiz-label">◆ Audience Check — Show of Hands</span>
+    <div class="quiz-q">Which of these have you used in the last 30 days?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt">ChatGPT</div><div class="quiz-opt">Claude (Anthropic)</div><div class="quiz-opt">AI inside my CRM or MLS</div><div class="quiz-opt">None yet — that's why I'm here</div>
+    </div>
+  </div>
+  <div class="section-num">02</div>
+</section>
+
+<!-- 03 -->
+<section id="answer" data-notes="[8:00–13:00] Land the thesis hard. 'Yes — but only if you use it right.' Pause. Let it breathe. AI does not make a bad agent great. It makes a good agent very hard to compete with. The 50/50 split resonates with everyone. Ask: 'What percentage of your week doesn't require your license, your relationships, or your judgment?' That's where AI lives. Key line to say twice: 'The goal is not to automate your personality. It's to free your personality to do the work only you can do.'">
+  <div class="section-tag fade-in">03 / 12 · The Honest Answer</div>
+  <h2 class="fade-in">Yes. But Only If<br>You Use It Right.</h2>
+  <div class="divider fade-in"></div>
+  <p class="fade-in">AI doesn't replace what makes a great agent great — <strong>relationships, judgment, trust, and local knowledge.</strong> What it does is eliminate the friction between you and the work that actually matters.</p>
+  <p class="fade-in">You became an agent to help people navigate one of the biggest decisions of their lives. Somewhere along the way the job became <strong>50% paperwork, follow-up, and repetition.</strong> AI takes the 50% that doesn't require you — so you can spend everything on the part only you can do.</p>
+  <div class="two-col fade-in">
+    <div class="card" style="border-top:2px solid var(--red)"><span class="tag">What AI Cannot Touch</span><h3>The Human 50%</h3><p>Your relationships. Local knowledge. Reading a room at 10pm when an offer is going sideways. The trust a client places in you specifically. AI has zero ability to replicate any of this. You do.</p></div>
+    <div class="card" style="border-top:2px solid var(--teal)"><span class="tag">What AI Owns</span><h3>The Admin 50%</h3><p>Writing the listing description at 10pm. Drafting the third follow-up email. Answering the same question every buyer asks. Formatting the CMA narrative. That 50% is AI's — not yours.</p></div>
+  </div>
+  <div class="section-num">03</div>
+</section>
+
+<!-- 04 -->
+<section id="five-ways" data-notes="[13:00–22:00] Core curriculum. About 90 seconds per card. Real examples throughout. Card 01 — LAPD analogy: 'I worked patrol. Calls came in at 2am no matter what. Your AI voice assistant is always on shift — the call still gets answered and the lead still gets captured.' Card 02 — Follow-up: 'Agents don't lose deals because they weren't good enough. They lose because life happened and the follow-up didn't.' Card 03 — Ask the room how long a listing description takes them to write. Tell them yours takes 4 minutes. Card 04 — Walk a CMA prep scenario. Card 05 — 'You have gold in your phone you haven't called in 2 years. AI fixes that starting today.'">
+  <div class="section-tag fade-in">04 / 12 · Core Curriculum</div>
+  <h2 class="fade-in">5 Ways AI Makes<br>Agents More Productive</h2>
+  <div class="divider fade-in"></div>
+  <div class="cards fade-in">
+    <div class="card"><span class="card-num">01</span><span class="tag">Lead Capture</span><h3>Never Miss a Lead Again</h3><p>An AI voice assistant answers your phone at 2am on Sunday when you're at your kid's game. Captures the lead, qualifies them, books a showing. A receptionist on duty 24/7 who never sleeps and never has a bad day.</p></div>
+    <div class="card"><span class="card-num">02</span><span class="tag">Follow-Up</span><h3>Follow-Up That Actually Happens</h3><p>Most agents lose deals because they forgot to follow up — not because they weren't good enough. AI sends the right message, at the right time, to every lead. Without you having to remember.</p></div>
+    <div class="card"><span class="card-num">03</span><span class="tag">Content</span><h3>Content in Minutes, Not Hours</h3><p>Listing descriptions, market updates, neighborhood posts, email newsletters — AI drafts all of it in your voice in minutes. You review, tweak, post. A professional copywriter on call around the clock.</p></div>
+    <div class="card"><span class="card-num">04</span><span class="tag">Research</span><h3>Market Intel in 5 Minutes</h3><p>Comps, trends, CMA narratives, neighborhood summaries — tasks that used to take an hour now take five minutes. A junior analyst who reads everything and pulls exactly what you need before you ask.</p></div>
+    <div class="card"><span class="card-num">05</span><span class="tag">Database</span><h3>Your Database Actually Works</h3><p>Most agents have a database full of gold they never contact. AI segments past clients, triggers check-ins, sends market updates, and surfaces who's most likely to transact next. Your CRM finally awake.</p></div>
+  </div>
+  <div class="section-num">04</div>
+</section>
+
+<!-- 05 -->
+<section id="tools" data-notes="[22:00–28:00] Walk through the actual tools by category. Three categories that matter: content, voice, and CRM automation. Message: pick your biggest pain point and start there — only there. On cost: 'The most powerful content tool available to you costs $20 a month or nothing. There is zero excuse to not start this week.' On the 500+ tools: 'Most of them are reselling access to the same underlying AI model. Don't pay $200/month for something a $20 ChatGPT subscription handles.' If the room has internet, open ChatGPT briefly before the next section's demo.">
+  <div class="section-tag fade-in">05 / 12 · Tools Overview</div>
+  <h2 class="fade-in">The Actual Tools<br>Working Right Now</h2>
+  <div class="divider fade-in"></div>
+  <p class="fade-in">500+ AI tools are marketed to agents. Most overlap. Here's what actually matters — organized by the problem it solves, not by what a vendor wants to charge you for.</p>
+  <table class="tool-table fade-in">
+    <thead><tr><th>Category</th><th>Tool / Platform</th><th>What It Solves</th><th>Cost</th></tr></thead>
+    <tbody>
+      <tr><td><strong style="color:var(--white)">Content Writing</strong></td><td>ChatGPT / Claude</td><td>Listing descriptions, emails, social posts, market updates, scripts</td><td><span class="tbadge free">Free / $20mo</span></td></tr>
+      <tr><td><strong style="color:var(--white)">Voice / Lead Capture</strong></td><td>AI Voice Assistants (via CRM)</td><td>After-hours call answering, lead qualification, calendar booking</td><td><span class="tbadge paid">$200–500mo</span></td></tr>
+      <tr><td><strong style="color:var(--white)">CRM Automation</strong></td><td>GoHighLevel / KVCore / FUB</td><td>Automated follow-up, database segmentation, pipeline management</td><td><span class="tbadge paid">$97–297mo</span></td></tr>
+      <tr><td><strong style="color:var(--white)">Visuals & Video</strong></td><td>Canva AI / CapCut AI</td><td>Listing graphics, social visuals, short-form video editing</td><td><span class="tbadge free">Free / $10–30mo</span></td></tr>
+      <tr><td><strong style="color:var(--white)">Market Research</strong></td><td>ChatGPT + MLS / Perplexity</td><td>Neighborhood summaries, trend analysis, CMA narrative drafting</td><td><span class="tbadge free">Free / $20mo</span></td></tr>
+      <tr><td><strong style="color:var(--white)">Scheduling & Admin</strong></td><td>AI in Google / Outlook</td><td>Smart scheduling, email drafting, meeting summaries</td><td><span class="tbadge free">Free / included</span></td></tr>
+    </tbody>
+  </table>
+  <div class="section-num">05</div>
+</section>
+
+<!-- 06 -->
+<section id="demo" data-notes="[28:00–35:00] Highest-impact segment of the 50 minutes. Get a laptop on screen. Run Prompt 01 live. Read the output aloud. Have the room score it 1–10. Run Prompt 02. Then Prompt 03 — ask someone in the room for a real property, real beds and baths, one feature they love. Build the prompt live with their data. Run it. Read it. That 90-second moment converts the skeptics faster than everything else combined. Key line: 'That took 45 seconds. Writing it yourself takes 20 minutes. That is the math.' If no screen is available — describe the output verbally and emphasize the time difference. But find the screen.">
+  <div class="section-tag fade-in">06 / 12 · Live Demo</div>
+  <h2 class="fade-in">Watch It Work —<br>Right Now, Live</h2>
+  <div class="divider fade-in"></div>
+  <p class="fade-in">The fastest way to understand AI is to watch it produce something real in front of you. Three prompts. Under 7 minutes total. Pull up ChatGPT on screen and run these live.</p>
+  <div class="demo-block fade-in">
+    <span class="demo-label">◆ Demo Prompt 01 — Listing Description</span>
+    <div class="demo-prompt"><span>"Write a compelling listing description for a 4-bedroom, 2.5-bath home in Santa Clarita, California. Built in 2003, 2,100 sq ft, open kitchen, hardwood floors, mountain views, cul-de-sac street. Tone: warm and professional. Target buyer: move-up family. 150 words max."</span></div>
+    <p style="font-size:13px;color:#888;margin:0">→ Output in under 15 seconds. Ask the room to score it 1–10. Then ask: how long would that have taken you to write?</p>
+  </div>
+  <div class="demo-block fade-in">
+    <span class="demo-label">◆ Demo Prompt 02 — Follow-Up Email</span>
+    <div class="demo-prompt"><span>"Write a 90-day follow-up email to a past client from my perspective as their real estate agent. They bought their first home with me. Keep it warm, personal, not salesy. Remind them I'm here when they're ready to move up. Sign off as Connor MacIvor, ConnorWithHonor.com."</span></div>
+    <p style="font-size:13px;color:#888;margin:0">→ Read it aloud. Ask: 'Would you send this?' Two edits max — then it's ready. That's the entire process.</p>
+  </div>
+  <div class="demo-block fade-in">
+    <span class="demo-label">◆ Demo Prompt 03 — Audience Participation (Most Powerful)</span>
+    <div class="demo-prompt"><span>Ask someone in the room: "Give me a real property — area, beds, baths, one feature you love about it." Build the prompt live on screen with their exact data. Run it. Read it to the whole room.</span></div>
+    <p style="font-size:13px;color:#888;margin:0">→ Real data. Real output. Real time. This is the moment the room stops being skeptical.</p>
+  </div>
+  <div class="section-num">06</div>
+</section>
+
+<!-- 07 -->
+<section id="warning" data-notes="[35:00–39:00] Don't sugarcoat. These pitfalls are real and agents need to hear them straight. On 'Trusting Output Blindly' — give a concrete example of AI being confidently wrong about a school district, zoning, or square footage. 'AI is confidently wrong the same way a rookie agent is confidently wrong. You're the license holder. You verify.' On 'Doing Nothing' — land the urgency hard: 'In 27 years I've watched agents wait out every technology shift. Some of them are still waiting. The market never waited with them.' On 'Generic Prompts' — contrast a lazy prompt vs a specific one. The difference in output quality is dramatic and immediate.">
+  <div class="section-tag fade-in">07 / 12 · What to Avoid</div>
+  <h2 class="fade-in">Where Agents Go<br>Wrong With AI</h2>
+  <div class="divider fade-in"></div>
+  <p class="fade-in">Most AI failures in real estate aren't the AI's fault. They're process failures. Here's exactly where agents go wrong — and how to avoid every one of them.</p>
+  <div class="warn-cards fade-in">
+    <div class="warn-card"><span class="card-icon">⚠</span><h3>Using It As a Replacement</h3><p>Clients hire you — not a bot. AI works behind the scenes. The moment it replaces your personality and relationships is the moment it starts costing you business.</p></div>
+    <div class="warn-card"><span class="card-icon">⚠</span><h3>Trusting Output Blindly</h3><p>AI can be confidently wrong. Never post a listing description, CMA, or client document without reading it first. Your license is on the line — not the AI's.</p></div>
+    <div class="warn-card"><span class="card-icon">⚠</span><h3>Chasing Every Shiny Tool</h3><p>500 tools marketed to agents right now. Most overlap. Start with one that solves your single biggest pain point. Complexity only after that one thing works.</p></div>
+    <div class="warn-card"><span class="card-icon">⚠</span><h3>Doing Absolutely Nothing</h3><p>The biggest mistake. Agents building AI habits right now are building a lead that becomes very hard to close in 12 months. Waiting has a real, compounding cost.</p></div>
+    <div class="warn-card"><span class="card-icon">⚠</span><h3>Using Generic Prompts</h3><p>"Write me a listing description" produces garbage. Specific prompts — beds, baths, tone, buyer profile, word count — produce something you can actually send to a client.</p></div>
+    <div class="warn-card"><span class="card-icon">⚠</span><h3>No Review Before Sending</h3><p>AI is your first draft. One wrong fact in an AI-generated email can damage a relationship you spent years building. Read everything before it leaves your name on it.</p></div>
+  </div>
+  <div class="section-num">07</div>
+</section>
+
+<!-- 08 -->
+<section id="good" data-notes="[39:00–43:00] Flip the energy. We just covered what not to do — now this is what right looks like. Walk each card. The most important concept: 'Amplify, don't replace.' The best agents using AI right now sound MORE like themselves, not less. They're faster — not different. On 'Pick One System': help the room decide before they leave. 'If content is your pain — ChatGPT. If you're missing after-hours calls — AI voice. If your database is dead — CRM automation. Pick the one that matches your pain. Only that one. Start today.'">
+  <div class="section-tag fade-in">08 / 12 · Best Practices</div>
+  <h2 class="fade-in">What Right<br>Looks Like</h2>
+  <div class="divider fade-in"></div>
+  <p class="fade-in">The agents winning with AI right now are following a simple framework. It's not complicated — it's consistent.</p>
+  <div class="good-cards fade-in">
+    <div class="good-card"><span class="card-icon" style="color:var(--teal)">▶</span><h3>Start With Your Biggest Time Drain</h3><p>What takes the most time that doesn't require your direct judgment? That's your first AI use case. For most agents: follow-up, content, or answering the same questions over and over.</p></div>
+    <div class="good-card"><span class="card-icon" style="color:var(--teal)">▶</span><h3>Amplify You — Don't Replace You</h3><p>Your voice. Your market knowledge. Your relationships. AI makes those things go further. The best agents using AI right now sound MORE like themselves — not less.</p></div>
+    <div class="good-card"><span class="card-icon" style="color:var(--teal)">▶</span><h3>Pick One System and Actually Learn It</h3><p>ChatGPT for content. AI voice for leads. Automated CRM for follow-up. Pick one. 30 days. Measure it. Add the next one only after the first one works consistently.</p></div>
+    <div class="good-card"><span class="card-icon" style="color:var(--teal)">▶</span><h3>Always Review Before Sending</h3><p>AI is your first draft — never your final answer. Your reputation is on the line every time something leaves your name on it.</p></div>
+    <div class="good-card"><span class="card-icon" style="color:var(--teal)">▶</span><h3>Build a Personal Prompt Library</h3><p>Save prompts that work. Over 30 days your AI output gets dramatically better because you've learned exactly how to talk to it for your market and your voice.</p></div>
+    <div class="good-card"><span class="card-icon" style="color:var(--teal)">▶</span><h3>Track One Number: Time Saved Weekly</h3><p>Start at zero. After 30 days using AI for content, follow-up, and research — most agents report 5–8 hours recovered per week. Track it. That number motivates everything else.</p></div>
+  </div>
+  <div class="section-num">08</div>
+</section>
+
+<!-- 09 -->
+<section id="example" data-notes="[43:00–46:00] Tell this like a story, not a list. 'It's 7am. Your listing just went live. You're making coffee.' Walk through each moment and let the room place themselves in it. The punchline at 6pm: 'This agent didn't work harder today. She worked on fewer things. Everything that didn't require her license, her relationships, or her judgment — AI handled it. And she went home without the pile.' Paint that picture clearly. That vision is what they're buying into — not the tools.">
+  <div class="section-tag fade-in">09 / 12 · Real World</div>
+  <h2 class="fade-in">What an AI-Powered<br>Day Actually Looks Like</h2>
+  <div class="divider fade-in"></div>
+  <p class="fade-in">Not hypothetical. This is a real workflow running for agents today. Walk through this day and ask yourself: which of these hours do you want back?</p>
+  <div class="timeline fade-in">
+    <div class="tl-item"><div class="tl-time">7:00AM</div><div class="tl-body"><h3>Listing Goes Live</h3><p>AI drafts social posts, email blast, and neighborhood announcement automatically. Agent reviews, approves, posts — 8 minutes instead of 45.</p><span class="tl-chip">Content AI</span></div></div>
+    <div class="tl-item"><div class="tl-time">9:15AM</div><div class="tl-body"><h3>Follow-Up Email Needed</h3><p>Instead of staring at a blank screen for 20 minutes, agent types a 2-sentence brief. Full personalized email ready in 45 seconds. Edited and sent in 3 minutes.</p><span class="tl-chip">Content AI</span></div></div>
+    <div class="tl-item"><div class="tl-time">10:22AM</div><div class="tl-body"><h3>Inbound Call — Agent Is in a Showing</h3><p>AI voice assistant picks up. Qualifies the caller, captures contact info, answers listing questions, books a showing on the agent's calendar. Lead never lost.</p><span class="tl-chip">AI Voice</span></div></div>
+    <div class="tl-item"><div class="tl-time">2:00PM</div><div class="tl-body"><h3>CRM Triggers 90-Day Check-Ins</h3><p>Personalized message in the agent's voice goes to 12 past clients automatically. Three reply. One wants to list in the spring. Agent didn't touch a keyboard.</p><span class="tl-chip">CRM Automation</span></div></div>
+    <div class="tl-item"><div class="tl-time">6:00PM</div><div class="tl-body"><h3>Seller Presentation — Tomorrow Morning</h3><p>AI pulls market data, drafts the narrative, formats the talking points. Agent reviews in 10 minutes. Presentation ready. Day done — without the pile.</p><span class="tl-chip">Research AI</span></div></div>
+  </div>
+  <div class="section-num">09</div>
+</section>
+
+<!-- 10 -->
+<section id="start" data-notes="[46:00–48:00] The most important 2 minutes of the class. Make it immediate and physical. 'Before you leave this room I want one thing from you — open your phone, go to ChatGPT.com, and type a prompt. Not tonight. Right now.' If people pick up their phones during this — that IS the win. That is the homework. Get a verbal commitment from the room on Step 1 before moving to the close. Step 1 costs nothing and takes 20 minutes. Step 2 costs one hour. Step 3 changes their business. In that order. No shortcuts.">
+  <div class="section-tag fade-in">10 / 12 · Action Plan</div>
+  <h2 class="fade-in">Where to Start —<br>No Overwhelm</h2>
+  <div class="divider fade-in"></div>
+  <p class="fade-in">Three steps. This week, this month, this quarter — in that order. Nothing costs more than 20 minutes to begin.</p>
+  <div class="steps fade-in">
+    <div class="step"><span class="step-label">Step One</span><h3>This Week</h3><p>Open ChatGPT. Write one listing description or one follow-up email. Read it. Edit it. See how much time you saved. That's your first rep. Do it before you leave today.</p><span class="step-time">Investment: 20 Minutes</span></div>
+    <div class="step"><span class="step-label">Step Two</span><h3>This Month</h3><p>Identify your single biggest time drain. Find one AI tool that solves that one problem. Use it every day for 30 days before adding anything else. One tool. 30 days. Measure it.</p><span class="step-time">Investment: 1 Hour Setup</span></div>
+    <div class="step"><span class="step-label">Step Three</span><h3>This Quarter</h3><p>Build the system. AI voice for lead capture. Automated follow-up for your database. Content workflow for your marketing. Three tools working together — that's when the business changes.</p><span class="step-time">Investment: Ongoing</span></div>
+  </div>
+  <div class="quiz-block fade-in">
+    <span class="quiz-label">◆ Commitment Moment — Before You Leave</span>
+    <div class="quiz-q">Which are you committing to this week?</div>
+    <div class="quiz-opts">
+      <div class="quiz-opt">Write a listing description with ChatGPT</div><div class="quiz-opt">Write a follow-up email with ChatGPT</div><div class="quiz-opt">Research one AI CRM tool</div><div class="quiz-opt">All three — I'm already in</div>
+    </div>
+  </div>
+  <div class="section-num">10</div>
+</section>
+
+<!-- 11 -->
+<section id="qa" data-notes="[48:00–50:00] Open the floor. If no hands go up: seed it with the most common one — 'Will AI replace agents?' Answer: 'No. AI will replace agents who refuse to use AI. The agent using it will replace the ones who don't.' Other common: 'What does it cost to start?' Free. ChatGPT free tier. 'Is it safe to use client data?' Never paste private client data into a public AI tool. Use general prompts — the property and the situation, not the person. 'Why should I listen to a real estate agent about AI?' — 'Because I don't just talk about it. I build it, I install it, and I run it in active real estate transactions. I live in both worlds. That's the difference between a vendor and a practitioner.' Close strong: 'You came in with a question. You're leaving with an answer and a plan. Everything else is execution.'">
+  <div class="section-tag fade-in">11 / 12 · Open Q&amp;A</div>
+  <h2 class="fade-in">Your Questions —<br>Straight Answers</h2>
+  <div class="divider fade-in"></div>
+  <p class="fade-in">The questions that come up every time — answered straight. Then the floor is yours.</p>
+  <div class="good-cards fade-in">
+    <div class="good-card"><span class="card-icon" style="color:var(--amber)">Q</span><h3>Will AI replace real estate agents?</h3><p>No. AI will replace agents who refuse to use AI. The agent using it will replace the ones who don't. That's the straight answer.</p></div>
+    <div class="good-card"><span class="card-icon" style="color:var(--amber)">Q</span><h3>What does it cost to get started?</h3><p>Zero. ChatGPT's free tier is enough to get your first 30 days of results. Paid tools come later — after you've proven the habit works for you specifically.</p></div>
+    <div class="good-card"><span class="card-icon" style="color:var(--amber)">Q</span><h3>Is it safe to use client information?</h3><p>Use general prompts. Never paste private client names, addresses, or financials into a public AI tool. Keep prompts about the property and the situation — not the person.</p></div>
+    <div class="good-card"><span class="card-icon" style="color:var(--amber)">Q</span><h3>Why a real estate agent — not an AI company?</h3><p>Because I'm not a vendor. I build and install these systems for active agents and I run them in my own real estate business daily. I live in both worlds simultaneously. That's the difference.</p></div>
+  </div>
+  <div class="section-num">11</div>
+</section>
+
+<!-- 12 -->
+<section id="close" data-notes="[50:00] Final 60 seconds. 'You came in here with a question. You're leaving with an answer and a plan. Everything else is execution.' Authentic close — no pitch, no pressure. If anyone wants to see what a full AI system looks like built specifically for their real estate business — HonorElevate.com, book a call. That's it. Thank you. Mean it.">
+  <div class="section-tag fade-in">12 / 12 · Let's Talk</div>
+  <h2 class="fade-in">Questions?<br>I'm Right Here.</h2>
+  <div class="divider fade-in"></div>
+  <p class="fade-in">If anything today sparked a question about how AI could work in your specific business — I'm happy to talk it through. No pitch. No pressure. Just a straight conversation about what would actually make sense for you.</p>
+  <div class="contact-grid fade-in">
+    <div class="contact-card"><span class="label">Web</span><a href="https://connorwithhonor.com" target="_blank">ConnorWithHonor.com</a></div>
+    <div class="contact-card"><span class="label">Phone</span><span>661-400-1720</span></div>
+    <div class="contact-card"><span class="label">AI Systems</span><a href="https://honorelevate.com" target="_blank">HonorElevate.com</a></div>
+    <div class="contact-card"><span class="label">AI Consulting</span><a href="https://santaclaritaartificialintelligence.com" target="_blank">SantaClaritaAI.com</a></div>
+  </div>
+  <div class="badges fade-in" style="margin-top:28px">
+    <span class="badge amber">Connor MacIvor — AI Growth Architect</span>
+    <span class="badge">27 Yrs Santa Clarita Real Estate</span>
+    <span class="badge">23 Yrs LAPD</span>
+    <span class="badge teal">CA DRE #01238257</span>
+  </div>
+  <div class="footer-byline fade-in">Coded by Connor with Honor | AI Growth Architect · <a href="https://honorelevate.com" target="_blank">honorelevate.com</a></div>
+  <div class="section-num">12</div>
+</section>
+
+<script>
+  const toggle=document.getElementById('notesToggle'),panel=document.getElementById('notesPanel'),notesText=document.getElementById('notesText');
+  let notesVisible=false;
+  toggle.addEventListener('click',()=>{notesVisible=!notesVisible;panel.classList.toggle('visible',notesVisible);toggle.classList.toggle('active',notesVisible);toggle.textContent=notesVisible?'NOTES ◆ ON':'NOTES ◆ OFF';});
+  const sections=document.querySelectorAll('section[data-notes]');
+  const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting&&e.intersectionRatio>.3)notesText.textContent=e.target.dataset.notes;});},{threshold:.3});
+  sections.forEach(s=>obs.observe(s));
+  const fadeEls=document.querySelectorAll('.fade-in');
+  const fadeObs=new IntersectionObserver(entries=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*70);fadeObs.unobserve(e.target);}});},{threshold:.1});
+  fadeEls.forEach(el=>fadeObs.observe(el));
+  document.querySelectorAll('.quiz-opt').forEach(opt=>{opt.addEventListener('click',()=>{opt.closest('.quiz-opts').querySelectorAll('.quiz-opt').forEach(o=>o.classList.remove('selected'));opt.classList.add('selected');});});
+</script>
+</body>
+</html>
